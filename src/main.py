@@ -26,16 +26,16 @@ class BMI:
         if bmi < 18.5:
             health_risk = "Malnutrition Risk"
             category = "Underweight"
-        elif (18.5 <= bmi < 25):
+        elif 18.5 <= bmi < 25:
             health_risk = "Low Risk"
             category = "Normal weight"
-        elif ( 25 <= bmi < 30):
+        elif 25 <= bmi < 30:
             health_risk = "Enhanced Risk"
             category = "Overweight"
-        elif ( 30 <= bmi < 35):
+        elif 30 <= bmi < 35:
             health_risk = "Medium Risk"
             category = "Moderately obese"
-        elif ( 35 <= bmi < 40):
+        elif 35 <= bmi < 40:
             health_risk = "High Risk"
             category = "Severely obese"
         else:
@@ -52,12 +52,14 @@ class BMI:
                 A DataFrame with 3 additional columns BMI(kg/m2), BMI Catgory and Health Risk
         """
         #initialisig
-        self.df_input['BMI(kg/m2)'], self.df_input['BMI Category'], self.df_input['Health Risk']= None, None, None
+        self.df_input['BMI(kg/m2)'], self.df_input['BMI Category'], self.df_input['Health Risk'] = 
+                                                                                None, None, None
         # calculating BMI
-        self.df_input['BMI(kg/m2)'] = self.df_input.apply(lambda x : round(x['WeightKg']/(x['HeightCm']/100),2),
-                                             axis=1)
+        self.df_input['BMI(kg/m2)'] = self.df_input
+                                .apply(lambda x : round(x['WeightKg']/(x['HeightCm']/100),2), axis=1)
         # determining category and health risk
-        self.df_input[['BMI Category','Health Risk']] = self.df_input['BMI(kg/m2)'].apply(self.bmi_chart)
+        self.df_input[['BMI Category','Health Risk']] = self.df_input['BMI(kg/m2)']
+                                                            .apply(self.bmi_chart)
 
         return self.df_input
 
