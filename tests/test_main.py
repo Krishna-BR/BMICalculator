@@ -27,3 +27,11 @@ def test_overweight_count(create_bmi_object):
     count = create_bmi_object.get_overweight_count()
     assert count == 0
 
+def test_report(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert type(df) == pd.DataFrame
+
+def test_bmi_calculation(create_bmi_object):
+    df = create_bmi_object.bmi_calculator()
+    assert type(df) == pd.DataFrame
+
