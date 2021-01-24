@@ -17,6 +17,16 @@ def create_bmi_object():
     bmi = BMI(df)
     return bmi
 
+def check_bmi_category(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert df['BMI Category'].unique().tolist() == ['Very severly obese', 'Severely obese']
+
+def check_health_risk(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert df['Health Risk'].unique().tolist() == ['Very High Risk', 'High Risk']
+
+
+
 def check_new_columns(create_bmi_object):
     df = create_bmi_object.get_bmi_report()
     assert df.columns.tolist() == ['Gender', 'HeightCm', 'WeightKg', 'BMI(kg/m2)', 'BMI Category',
