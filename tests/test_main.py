@@ -25,7 +25,8 @@ def check_health_risk(create_bmi_object):
     df = create_bmi_object.get_bmi_report()
     assert df['Health Risk'].unique().tolist() == ['Very High Risk', 'High Risk']
 
-
+def check_bmi():
+    assert list(BMI.bmi_chart(10.29)) == ['Underweight', 'Malnutrition Risk']
 
 def check_new_columns(create_bmi_object):
     df = create_bmi_object.get_bmi_report()
