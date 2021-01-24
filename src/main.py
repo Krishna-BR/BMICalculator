@@ -52,8 +52,9 @@ class BMI:
                 A DataFrame with 3 additional columns BMI(kg/m2), BMI Catgory and Health Risk
         """
         #initialisig
-        self.df_input['BMI(kg/m2)'], self.df_input['BMI Category'], self.df_input['Health Risk'] = 
-                                                                                None, None, None
+        self.df_input['BMI(kg/m2)'] = None
+        self.df_input['BMI Category'] = None
+        self.df_input['Health Risk'] = None
         # calculating BMI
         self.df_input['BMI(kg/m2)'] = self.df_input
                                 .apply(lambda x : round(x['WeightKg']/(x['HeightCm']/100),2), axis=1)
