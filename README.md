@@ -1,14 +1,12 @@
-![Tests](https://github.com/eugeneyan/python-collab-template/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/eugeneyan/python-collab-template/branch/master/graph/badge.svg)](https://codecov.io/gh/eugeneyan/python-collab-template)
+![Tests](https://github.com/Krishna-BR/BMICalculator/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/Krishna-BR/BMICalculator/branch/main/graph/badge.svg)](https://codecov.io/gh/Krishna-BR/BMICalculator)
 
-# python-collab-template
-
-Repository for [How to set up a Python Repo for Automation and Collaboration](https://eugeneyan.com/writing/setting-up-python-project-for-automation-and-collaboration/).
+# python-bmi-calculator
 
 ## Quickstart
 ```
 # Clone this repo and change directory
-git clone git@github.com:eugeneyan/python-collab-template.git
-cd python-collab-template
+git clone git@github.com:Krishna-BR/BMICalculator.git
+cd BMICalculator
 
 # Create python environment (-B might be needed to execute)
 make setup -B
@@ -19,7 +17,6 @@ make check
 
 Make a pull request to this repo to see the checks in action 😎 
 
-Here's a [sample pull request](https://github.com/eugeneyan/python-collab-template/pull/1) which initially failed ❌ the checks, and then passed ✅.
 
 ## Running our checks
 
@@ -29,112 +26,168 @@ In it, we cover the following aspects of setting up a python project, including:
 
 ```python
 @pytest.fixture
-def lowercased_df():
-    string_col = ['futrelle, mme. jacques heath (lily may peel)',
-                  'backstrom, major. karl alfred (maria mathilda gustafsson)']
-    df_dict = {'string': string_col}
-    df = pd.DataFrame(df_dict)
-    return df
+def create_bmi_object():
+    data = [
+                {"Gender":"Male","HeightCm":171,"WeightKg":96},
+                {"Gender":"Male","HeightCm":161,"WeightKg":85},
+                {"Gender":"Male","HeightCm":180,"WeightKg":77},
+                {"Gender":"Female","HeightCm":166,"WeightKg":62},
+                {"Gender":"Female","HeightCm":150,"WeightKg":70},
+                {"Gender":"Female","HeightCm":167,"WeightKg":82},
+            ]
 
-def test_extract_title(lowercased_df):
-    result = extract_title(lowercased_df, col='string')
-    assert result['title'].tolist() == ['mme', 'ms', 'mr', 'lady', 'major']
+    df = pd.DataFrame(data)
+    bmi = BMI(df)
+    return bmi
 
+def test_bmi_category(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert df['BMI Category'].unique().tolist() == ['Very severly obese', 'Severely obese']
 
-def test_extract_title_with_replacement(lowercased_df):
-    title_replacement = {'mme': 'mrs', 'ms': 'miss', 'lady': 'rare', 'major': 'rare'}
-    result = extract_title(lowercased_df, col='string', replace_dict=title_replacement)
-    assert result['title'].tolist() == ['mrs', 'miss', 'mr', 'rare', 'rare']
+def test_health_risk(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert df['Health Risk'].unique().tolist() == ['Very High Risk', 'High Risk']
+
+def test_bmi():
+    assert list(BMI.bmi_chart(10.29)) == ['Underweight', 'Malnutrition Risk']
+
+def test_new_columns(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert df.columns.tolist() == ['Gender', 'HeightCm', 'WeightKg', 'BMI(kg/m2)', 'BMI Category',
+       'Health Risk']
+
+def test_overweight_count(create_bmi_object):
+
+    count = create_bmi_object.get_overweight_count()
+    assert count == 0
+
+def test_report(create_bmi_object):
+    df = create_bmi_object.get_bmi_report()
+    assert type(df) == pd.DataFrame
+
+def test_bmi_calculation(create_bmi_object):
+    df = create_bmi_object.bmi_calculator()
+    assert type(df) == pd.DataFrame
 ```
 
 ```shell
 $ pytest
 ============================= test session starts ==============================
-platform darwin -- Python 3.8.2, pytest-5.4.3, py-1.8.2, pluggy-0.13.1
-rootdir: /Users/eugene/projects/python-collaboration-template/tests/data_prep
-collected 2 items
+platform linux -- Python 3.8.6, pytest-6.2.1, py-1.10.0, pluggy-0.13.1
+rootdir: /home/runner/work/BMICalculator/BMICalculator
+plugins: cov-2.11.1
+collected 7 items
 
-test_categorical.py::test_extract_title PASSED                           [ 50%]
-test_categorical.py::test_extract_title_with_replacement PASSED          [100%]
-
-============================== 2 passed in 0.30s ===============================
+tests/test_main.py .......                                               [100%]
+============================== 7 passed in 0.57s ===============================
 ```
 
 ### Code Coverage
 ```
 $ pytest --cov=src
 ============================= test session starts ==============================
-platform darwin -- Python 3.8.2, pytest-5.4.3, py-1.8.2, pluggy-0.13.1
-rootdir: /Users/eugene/projects/python-collaboration-template
-plugins: cov-2.10.0
-collected 9 items
+----------- coverage: platform linux, python 3.8.6-final-0 -----------
+Name              Stmts   Miss  Cover   Missing
+-----------------------------------------------
+src/__init__.py       0      0   100%
+src/main.py          37      6    84%   30-31, 33-34, 36-37
+-----------------------------------------------
+TOTAL                37      6    84%
 
-tests/data_prep/test_categorical.py ....                                 [ 44%]
-tests/data_prep/test_continuous.py .....                                 [100%]
+Required test coverage of 80% reached. Total coverage: 83.78%
 
----------- coverage: platform darwin, python 3.8.2-final-0 -----------
-Name                           Stmts   Miss  Cover
---------------------------------------------------
-src/__init__.py                    0      0   100%
-src/data_prep/__init__.py          0      0   100%
-src/data_prep/categorical.py      12      0   100%
-src/data_prep/continuous.py       11      0   100%
---------------------------------------------------
-TOTAL                             23      0   100%
-
-============================== 9 passed in 0.49s ===============================
+============================== 7 passed in 0.57s ===============================
 ```
 
 ### Linting
 ```
 $ pylint src.data_prep.categorical --reports=y
-************* Module src.data_prep.categorical
-src/data_prep/categorical.py:20:0: C0330: Wrong continued indentation (add 9 spaces).
-                        df[title_col].map(replace_dict),
-                        ^        | (bad-continuation)
-src/data_prep/categorical.py:21:0: C0330: Wrong continued indentation (add 9 spaces).
-                        df[title_col])
-                        ^        | (bad-continuation)
-src/data_prep/categorical.py:16:12: W1401: Anomalous backslash in string: '\.'. String constant might be missing an r prefix. (anomalous-backslash-in-string)
-src/data_prep/categorical.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-src/data_prep/categorical.py:5:0: C0116: Missing function or method docstring (missing-function-docstring)
-src/data_prep/categorical.py:9:0: C0116: Missing function or method docstring (missing-function-docstring)
-src/data_prep/categorical.py:14:0: C0116: Missing function or method docstring (missing-function-docstring)
 
 Report
 ======
-12 statements analysed.
+36 statements analysed.
 
-...
+Statistics by type
+------------------
 
-Messages
---------
-+------------------------------+------------+
-|message id                    |occurrences |
-+==============================+============+
-|missing-function-docstring    |3           |
-+------------------------------+------------+
-|bad-continuation              |2           |
-+------------------------------+------------+
-|missing-module-docstring      |1           |
-+------------------------------+------------+
-|anomalous-backslash-in-string |1           |
-+------------------------------+------------+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |2      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |5      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
 
------------------------------------
-Your code has been rated at 4.17/10
+
+
+External dependencies
+---------------------
+::
+
+    pandas (src.main)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |43     |40.57 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |36     |33.96 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |17     |16.04 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |10     |9.43  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+
+------------------------------------
+Your code has been rated at 10.00/10
+
 ```
 
 ### Type Checking
 ```
 $ mypy src
-src/data_prep/continuous.py:23: error: Incompatible types in assignment (expression has type "str", variable has type "float")
-Found 1 error in 1 file (checked 4 source files)
-```
-
-```
-$ mypy src
-Success: no issues found in 4 source files
 ```
 
 ### Wrapping it in a Makefile
@@ -152,7 +205,7 @@ clean-test:
 clean: clean-pyc clean-test
 
 test: clean
-	. .venv/bin/activate && py.test tests --cov=src --cov-report=term-missing --cov-fail-under 95
+	. .venv/bin/activate && py.test tests --cov=src --cov-report=term-missing --cov-fail-under 80
 ```
 
 ### GitHub Actions with each `git push`
@@ -174,7 +227,3 @@ jobs:
     - run: bash <(curl -s https://codecov.io/bash)
 ```
 
-### 👉 View the [article](https://eugeneyan.com/writing/setting-up-python-project-for-automation-and-collaboration/) for the walkthrough.
-
-### Todo
-- [ ] Update requirements.txt to use `poetry`
