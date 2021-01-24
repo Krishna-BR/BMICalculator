@@ -56,7 +56,7 @@ class BMI:
         self.df_input['BMI Category'] = None
         self.df_input['Health Risk'] = None
         # calculating BMI
-        self.df_input['BMI(kg/m2)'] = self.df_input.apply(lambda x : 
+        self.df_input['BMI(kg/m2)'] = self.df_input.apply(lambda x :
         round(x['WeightKg']/(x['HeightCm']/100),2), axis=1)
         # determining category and health risk
         self.df_input[['BMI Category','Health Risk']] = self.df_input['BMI(kg/m2)'].apply(
