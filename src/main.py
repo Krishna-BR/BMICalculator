@@ -4,12 +4,12 @@ import pandas as pd
 class BMI:
     """ BMI Class Model
     """
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df_input: pd.DataFrame):
         """ Constructor
             Args:
                 data: List of Json Data
         """
-        self.df = df
+        self.df_input = df_input
         self.bmi_calculator()
 
     @staticmethod
@@ -26,16 +26,16 @@ class BMI:
         if bmi < 18.5:
             health_risk = "Malnutrition Risk"
             category = "Underweight"
-        elif ( bmi >= 18.5 and bmi < 25):
+        elif (18.5 <= bmi < 25):
             health_risk = "Low Risk"
             category = "Normal weight"
-        elif ( bmi >= 25 and bmi < 30):
+        elif ( 25 <= bmi < 30):
             health_risk = "Enhanced Risk"
             category = "Overweight"
-        elif ( bmi >=30 and bmi < 35):
+        elif ( 30 <= bmi < 35):
             health_risk = "Medium Risk"
             category = "Moderately obese"
-        elif ( bmi >=35 and bmi < 40):
+        elif ( 35 <= bmi < 40):
             health_risk = "High Risk"
             category = "Severely obese"
         else:
@@ -52,14 +52,14 @@ class BMI:
                 A DataFrame with 3 additional columns BMI(kg/m2), BMI Catgory and Health Risk
         """
         #initialisig
-        self.df['BMI(kg/m2)'], self.df['BMI Category'], self.df['Health Risk']= None, None, None
+        self.df_input['BMI(kg/m2)'], self.df_input['BMI Category'], self.df_input['Health Risk']= None, None, None
         # calculating BMI
-        self.df['BMI(kg/m2)'] = self.df.apply(lambda x : round(x['WeightKg']/(x['HeightCm']/100),2),
+        self.df_input['BMI(kg/m2)'] = self.df_input.apply(lambda x : round(x['WeightKg']/(x['HeightCm']/100),2),
                                              axis=1)
         # determining category and health risk
-        self.df[['BMI Category','Health Risk']] = self.df['BMI(kg/m2)'].apply(self.bmi_chart)
+        self.df_input[['BMI Category','Health Risk']] = self.df_input['BMI(kg/m2)'].apply(self.bmi_chart)
 
-        return self.df
+        return self.df_input
 
     def get_overweight_count(self) -> int:
         """ Gets the count of Overweight people
@@ -69,7 +69,7 @@ class BMI:
             Returns:
                 Int : No of overweight people
         """
-        return self.df[self.df['BMI Category'] == 'Overweight'].shape[0]
+        return self.df_input[self.df_input['BMI Category'] == 'Overweight'].shape[0]
 
     def get_bmi_report(self):
         """ Gets the BMI report
@@ -79,7 +79,7 @@ class BMI:
             Returns:
                 DataFrame
         """
-        return self.df
+        return self.df_input
 
 
 # if __name__== '__main__':
